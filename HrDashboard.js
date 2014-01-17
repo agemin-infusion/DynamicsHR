@@ -41,7 +41,8 @@
         var employeeData = new Array();
         SDK.JQuery.retrieveMultipleRecords(
          "ihr_employee",
-         "ihr_StartDate,ihr_EndDate,ihr_Office,ihr_Pulse,ihr_ManagerId,ihr_EmployeeStatus,statecode,statuscode, ihr_Group",
+         "$select=ihr_StartDate,ihr_EndDate,ihr_Office,ihr_Pulse,ihr_ManagerId,ihr_EmployeeStatus,statecode,statuscode, ihr_Group, ihr_fullname,ihr_ihr_employee_ihr_employeetrail&$expand=ihr_ihr_employee_ihr_employeetrail",
+         
          function (employees) {
              employeeData = employeeData.concat(employees);
          },
@@ -61,8 +62,7 @@
             .Count(function (x) { return (x.ihr_StartDate == null || x.ihr_StartDate < periodStartDate) && (x.ihr_EndDate != null && x.ihr_EndDate >= periodStartDate && x.ihr_EndDate < periodEndDate) });
 
         // (EmployeeStartDate == null || EmployeeStartDate before PeriodStartDate ) && (EmployeeEndDate is null || EmployeeEndDate before PeriodStartDate)
-        var startNumber = employeesEnumerable
-            .Count(function (x) { return (x.ihr_StartDate == null || x.ihr_StartDate < periodStartDate) && (x.ihr_EndDate == null || x.ihr_EndDate < periodStartDate) });
+        var startNumber = countActiveEmployeesForDate(employeesEnumerable, periodStartDate);
 
         // ( End date is null || EndDate is > PeriodEndDate)
         var endNumber = employeesEnumerable
@@ -71,6 +71,20 @@
         var retentionRateValue = numberOfEmployeesWhoLeft / ((startNumber + endNumber) / 2);
 
         callback(retentionRateValue);
+    }
+
+    function countActiveEmployeesForDate(employees, date) {
+
+        employees.Count(function (x) {
+            if (Object.prototype.toString.call(x.ihr_ihr_employee_ihr_employeetrail.results) === '[object Array]') {
+                if (x.ihr_ihr_employee_ihr_employeetrail.results.length == 2) {
+                    var trails = Enumerable.From(x.ihr_ihr_employee_ihr_employeetrail.results)
+                    .Where(function (tr) { return tr.statecode.Value == 1 && tr.ihr_date <= date; })
+                    .Max(function (tr) { return tr.ihr_date; })
+                    
+                }
+            } 
+        });
     }
 
     function initializeManagerFilter(employees) {
@@ -138,7 +152,8 @@
 
         var redOption = Enumerable.From(attPulse.OptionSet.Options)
            .Single(function (x) { return x.Label.UserLocalizedLabel.Label == "Red"; }).Value;
-        
+        //TODO: Add orange
+
         var redPeopleList = $("#redPeople");
         redPeopleList.empty();
         employees
