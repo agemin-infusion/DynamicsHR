@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>HR Dashboard</title>
+        <meta name="description" content="HR Dashboard">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/styles.css">
+        <script src="js/modernizr.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <div class="main-container">
+            <div class="tiles-wrapper">
+                <div class="tile pulse">
+                    <h2 class="header">Pulse</h2>
+                    <div id="pulse"></div>
+                </div>
+                <div class="tile socialevents">
+                    <h2 class="header">Social Events</h2>
+                    <div id="socialevents"></div>
+                </div>
+                <div class="tile benefits">
+                    <h2 class="header">Benefits</h2>
+                    <div id="benefits1"></div>
+                    <div id="benefits2"></div>
+                    <div id="benefits3"></div>
+                </div>
+                <div class="tile turnover">
+                    <h2 class="header">Turnover</h2>
+                    <div class="content">
+                        <h3 id="ytd_content" class="text">
+                            <span class="number">8</span>
+                            <span class="percent">%</span><br />
+                            <span class="type">YTD</span>
+                        </h3>
+                        <ul id="qtd_content" class="list hide">
+                            <li>
+                                <h3 class="text">
+                                    <span class="number">10</span>
+                                    <span class="percent">%</span><br />
+                                    <span class="type">FY13 Q1</span>
+                                </h3>
+                            </li>
+                            <li>
+                                <h3 class="text">
+                                    <span class="number">8</span>
+                                    <span class="percent">%</span><br />
+                                    <span class="type">FY13 Q2</span>
+                                </h3>
+                            </li>
+                            <li>
+                                <h3 class="text">
+                                    <span class="number">6</span>
+                                    <span class="percent">%</span><br />
+                                    <span class="type">FY13 Q3</span>
+                                </h3>
+                            </li>
+                            <li>
+                                <h3 class="text">
+                                    <span class="number">4</span>
+                                    <span class="percent">%</span><br />
+                                    <span class="type">FY13 Q4</span>
+                                </h3>
+                            </li>
+                        </ul>
+                    </div>
+                    <ul class="buttons">
+                        <li>
+                            <a id="ytd" class="active"></a>
+                        </li>
+                        <li>
+                            <a id="qtd"></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tile touchpoints">
+                    <h2 class="header">Touch Points</h2>
+                    <div id="touchpoints"></div>
+                </div>
+                <div class="tile followups">
+                    <h2 class="header">Follow Ups</h2>
+                    <ul class="list">
+                        <li class="list-element">
+                            <a href="#" target="_blank">Jeffry Tufts</a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#" target="_blank">Kendall Nicley</a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#" target="_blank">Lorene Lake</a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#" target="_blank">Shawna Whidden</a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#" target="_blank">Sueann Mcfetridge</a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#" target="_blank">Wenona Seale</a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#" target="_blank">Hien Ricotta</a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#" target="_blank">Libby Balas</a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#" target="_blank">Tamisha Montesinos</a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#" target="_blank">Olive Capuano</a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#" target="_blank">Carolee Wyer</a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#" target="_blank">Yesenia Litchfield</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="filters-wrapper">
+                <h2 class="header">Filters</h2>
+                <button class="filter-button">Clear All</button>
+                <div class="filter-select">
+                    <span class="name">
+                        Manager
+                        <i class="icon"></i>
+                    </span>
+                    <ul class="list">
+                        <li class="list-element">
+                            <a href="#manager1">
+                                <span class="name">manager1</span>
+                            </a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#manager2">
+                                <span class="name">manager2</span>
+                            </a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#manager3">
+                                <span class="name">manager3</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="filter-select">
+                    <span class="name">
+                        Office
+                        <i class="icon"></i>
+                    </span>
+                    <ul class="list">
+                        <li class="list-element">
+                            <a href="#office1">
+                                <span class="name">office1</span>
+                            </a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#office2">
+                                <span class="name">office2</span>
+                            </a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#office3">
+                                <span class="name">office3</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="filter-select">
+                    <span class="name">
+                        Group
+                        <i class="icon"></i>
+                    </span>
+                    <ul class="list">
+                        <li class="list-element">
+                            <a href="#group1">
+                                <span class="name">group1</span>
+                            </a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#group2">
+                                <span class="name">group2</span>
+                            </a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#group3">
+                                <span class="name">group3</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <label class="filter-label" for="date_from">Date From</label>
+                <div class="filter-input">
+                    <input id="date_from" type="text" />
+                </div>
+                <label class="filter-label" for="date_to">Date To</label>
+                <div class="filter-input">
+                    <input id="date_to" type="text" />
+                </div>
+            </div>
+        </div>
+        <script src="js/jquery.js"></script>
+        <script src="js/shieldui.js"></script>
+        <script type="text/javascript">
+            $(function(){
+                $('#ytd').click(function(){
+                    $('#qtd').removeClass('active');
+                    $(this).addClass('active');
+                    $('#qtd_content').addClass('hide');
+                    setTimeout(function(){
+                        $('#ytd_content').removeClass('hide');
+                    }, 300);
+                });
+                $('#qtd').click(function(){
+                    $('#ytd').removeClass('active');
+                    $(this).addClass('active');
+                    $('#ytd_content').addClass('hide');
+                    setTimeout(function(){
+                        $('#qtd_content').removeClass('hide');
+                    }, 300);
+                });
+                $("#pulse").shieldChart({
+                    exportOptions: {
+                        image: false,
+                        print: false
+                    },
+                    primaryHeader: {
+                        text: ""
+                    },
+                    seriesSettings: {
+                        donut: {
+                            enablePointSelection: true
+                        }
+                    },
+                    tooltipSettings: {
+                        customPointText: "{point.collectionAlias}: {point.y}"
+                    },
+                    seriesPalette: [
+                        "#e3e3e3",
+                        "#3d8521",
+                        "#ffde19",
+                        "#ff9000",
+                        "#ff4319"
+                    ],
+                    dataSeries: [{
+                        seriesType: "donut",
+                        collectionAlias: "Pulse",
+                        data: [
+                            ["Not Assigned", 10.2],
+                            ["Green", 70.6],
+                            ["Yellow", 10],
+                            ["Orange", 2.1],
+                            ["Red", 1.4]
+                        ]
+                    }]
+                });
+                $("#socialevents").shieldChart({
+                    exportOptions: {
+                        image: false,
+                        print: false
+                    },
+                    seriesSettings: {
+                        bar: {
+                            stackMode: "normal"
+                        }
+                    },
+                    axisX: {
+                        categoricalValues: [
+                            "1952", "1956", "1960", "1964", "1968", "1972", "1976",
+                            "1984", "1988", "1992", "1996", "2000", "2004", "2008", "2012"
+                        ]
+                    },
+                    primaryHeader: {
+                        text: "Olympic Medals won by USA"
+                    },
+                    dataSeries: [{
+                        seriesType: "bar",
+                        collectionAlias: "Gold Medals",
+                        data: [40, 32, 34, 36, 45, 33, 34, 83, 36, 37, 44, 37, 35, 36, 46]
+                    }, {
+                        seriesType: "bar",
+                        collectionAlias: "Silver Medals",
+                        data: [19, 25, 21, 26, 28, 31, 35, 60, 31, 34, 32, 24, 40, 38, 29]
+                    }, {
+                        seriesType: "bar",
+                        collectionAlias: "Bronze Medals",
+                        data: [17, 17, 16, 28, 34, 30, 25, 30, 27, 37, 25, 33, 26, 36, 29]
+                    }]
+                });
+                $("#benefits1").shieldChart({
+                    exportOptions: {
+                        image: false,
+                        print: false
+                    },
+                    primaryHeader: {
+                        text: ""
+                    },
+                    seriesSettings: {
+                        donut: {
+                            enablePointSelection: true
+                        }
+                    },
+                    tooltipSettings: {
+                        customPointText: "{point.collectionAlias}: {point.y}"
+                    },
+                    dataSeries: [{
+                        seriesType: "donut",
+                        collectionAlias: "Benefit",
+                        data: [
+                            ["Not Assigned", 10.2],
+                            ["Benefit", 85.6],
+                        ]
+                    }]
+                });
+                $("#benefits2").shieldChart({
+                    exportOptions: {
+                        image: false,
+                        print: false
+                    },
+                    primaryHeader: {
+                        text: ""
+                    },
+                    seriesSettings: {
+                        donut: {
+                            enablePointSelection: true
+                        }
+                    },
+                    tooltipSettings: {
+                        customPointText: "{point.collectionAlias}: {point.y}"
+                    },
+                    dataSeries: [{
+                        seriesType: "donut",
+                        collectionAlias: "Luxmed",
+                        data: [
+                            ["Not Assigned", 10.2],
+                            ["Luxmed", 35.6],
+                        ]
+                    }]
+                });
+                $("#benefits3").shieldChart({
+                    exportOptions: {
+                        image: false,
+                        print: false
+                    },
+                    primaryHeader: {
+                        text: ""
+                    },
+                    seriesSettings: {
+                        donut: {
+                            enablePointSelection: true
+                        }
+                    },
+                    tooltipSettings: {
+                        customPointText: "{point.collectionAlias}: {point.y}"
+                    },
+                    dataSeries: [{
+                        seriesType: "donut",
+                        collectionAlias: "Luxmed",
+                        data: [
+                            ["Not Assigned", 10.2],
+                            ["Luxmed", 35.6],
+                        ]
+                    }]
+                });
+                $("#touchpoints").shieldChart({
+                    exportOptions: {
+                        image: false,
+                        print: false
+                    },
+                    seriesSettings: {
+                        bar: {
+                            stackMode: "normal"
+                        }
+                    },
+                    axisX: {
+                        categoricalValues: [
+                            "1952", "1956", "1960", "1964", "1968", "1972", "1976",
+                            "1984", "1988", "1992", "1996", "2000", "2004", "2008", "2012"
+                        ]
+                    },
+                    primaryHeader: {
+                        text: "Olympic Medals won by USA"
+                    },
+                    dataSeries: [{
+                        seriesType: "bar",
+                        collectionAlias: "Gold Medals",
+                        data: [40, 32, 34, 36, 45, 33, 34, 83, 36, 37, 44, 37, 35, 36, 46]
+                    }, {
+                        seriesType: "bar",
+                        collectionAlias: "Silver Medals",
+                        data: [19, 25, 21, 26, 28, 31, 35, 60, 31, 34, 32, 24, 40, 38, 29]
+                    }, {
+                        seriesType: "bar",
+                        collectionAlias: "Bronze Medals",
+                        data: [17, 17, 16, 28, 34, 30, 25, 30, 27, 37, 25, 33, 26, 36, 29]
+                    }]
+                });
+            });
+        </script>
+    </body>
+</html>
