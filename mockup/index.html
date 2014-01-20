@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>HR Dashboard</title>
+        <meta name="description" content="HR Dashboard">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/styles.css">
+        <script src="js/modernizr.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <div class="main-container">
+            <div class="tiles-wrapper">
+                <div class="tile pulse">
+                    <h2 class="header">
+                        <a href="#" target="_blank">Pulse</a>
+                    </h2>
+                    <div id="pulse"></div>
+                </div>
+                <div class="tile socialevents">
+                    <h2 class="header">
+                        <a href="#" target="_blank">Social Events</a>
+                    </h2>
+                    <div id="socialevents"></div>
+                </div>
+                <div class="tile benefits">
+                    <h2 class="header">
+                        <a href="#" target="_blank">Benefits</a>
+                    </h2>
+                    <div id="benefits1"></div>
+                    <div id="benefits2"></div>
+                    <div id="benefits3"></div>
+                </div>
+                <div class="tile turnover">
+                    <h2 class="header">
+                        <a href="#" target="_blank">Turnover</a>
+                    </h2>
+                    <div class="content">
+                        <h3 id="ytd_content" class="content1 text">
+                            <span class="number">8</span>
+                            <span class="percent">%</span><br />
+                            <span class="type">YTD</span>
+                        </h3>
+                        <ul id="qtd_content" class="content2 list hide">
+                            <li>
+                                <h3 class="text">
+                                    <span class="number">10</span>
+                                    <span class="percent">%</span><br />
+                                    <span class="type">FY13 Q1</span>
+                                </h3>
+                            </li>
+                            <li>
+                                <h3 class="text">
+                                    <span class="number">8</span>
+                                    <span class="percent">%</span><br />
+                                    <span class="type">FY13 Q2</span>
+                                </h3>
+                            </li>
+                            <li>
+                                <h3 class="text">
+                                    <span class="number">6</span>
+                                    <span class="percent">%</span><br />
+                                    <span class="type">FY13 Q3</span>
+                                </h3>
+                            </li>
+                            <li>
+                                <h3 class="text">
+                                    <span class="number">4</span>
+                                    <span class="percent">%</span><br />
+                                    <span class="type">FY13 Q4</span>
+                                </h3>
+                            </li>
+                        </ul>
+                        <h3 id="ctd_content" class="content3 text hide">
+                            <span class="number">6</span>
+                            <span class="percent">%</span><br />
+                            <span class="type"><span id="txt_date_from">01/01/13</span> – <span id="txt_date_to">01/01/14</span></span>
+                            <div class="filters">
+                                <div class="filter-input">
+                                    <input id="inp_date_from" type="text" placeholder="01/01/13" />
+                                </div>
+                                <div class="filter-input">
+                                    <input id="inp_date_to" type="text" placeholder="01/01//14" />
+                                </div>
+                                <button id="btn_update" class="filter-button">Update</button>
+                            </div>
+                        </h3>
+                    </div>
+                    <ul class="buttons">
+                        <li>
+                            <a id="ytd" class="active"></a>
+                        </li>
+                        <li>
+                            <a id="qtd"></a>
+                        </li>
+                        <li>
+                            <a id="ctd"></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tile touchpoints">
+                    <h2 class="header">
+                        <a href="#" target="_blank">Touch Points</a>
+                    </h2>
+                    <div id="touchpoints"></div>
+                </div>
+                <div class="tile followups">
+                    <h2 class="header">
+                        <a href="#" target="_blank">Follow Ups</a>
+                    </h2>
+                    <div class="list-wrapper">
+                        <ul id="followups_list" class="list">
+                            <li class="list-element">
+                                <a href="#" target="_blank">Jeffry Tufts</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Kendall Nicley</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Lorene Lake</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Shawna Whidden</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Sueann Mcfetridge</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Wenona Seale</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Hien Ricotta</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Libby Balas</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Tamisha Montesinos</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Olive Capuano</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Carolee Wyer</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Yesenia Litchfield</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Jeffry Tufts</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Kendall Nicley</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Lorene Lake</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Shawna Whidden</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Sueann Mcfetridge</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Wenona Seale</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Hien Ricotta</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Libby Balas</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Tamisha Montesinos</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Olive Capuano</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Carolee Wyer</a>
+                            </li>
+                            <li class="list-element">
+                                <a href="#" target="_blank">Yesenia Litchfield</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="filters-wrapper">
+                <button id="btn_clear" class="filter-button">Clear All</button>
+                <div class="filter-select">
+                    <i class="icon"></i>
+                    <span class="select name">
+                        Manager
+                    </span>
+                    <ul class="list">
+                        <li class="list-element">
+                            <a href="#manager1">
+                                <span class="option name">Manager 1</span>
+                            </a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#manager2">
+                                <span class="option name">Manager 2</span>
+                            </a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#manager3">
+                                <span class="option name">Manager 3</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="filter-select">
+                    <i class="icon"></i>
+                    <span class="select name">
+                        Office
+                    </span>
+                    <ul class="list">
+                        <li class="list-element">
+                            <a href="#office1">
+                                <span class="option name">Office 1</span>
+                            </a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#office2">
+                                <span class="option name">Office 2</span>
+                            </a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#office3">
+                                <span class="option name">Office 3</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="filter-select">
+                    <i class="icon"></i>
+                    <span class="select name">
+                        Group
+                    </span>
+                    <ul class="list">
+                        <li class="list-element">
+                            <a href="#group1">
+                                <span class="option name">Group 1</span>
+                            </a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#group2">
+                                <span class="option name">Group 2</span>
+                            </a>
+                        </li>
+                        <li class="list-element">
+                            <a href="#group3">
+                                <span class="option name">Group 3</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script src="js/jquery.js"></script>
+        <script src="js/jquery-ui.js"></script>
+        <script src="js/shield-ui.js"></script>
+        <script src="js/slimscroll.js"></script>
+        <script type="text/javascript">
+            $(function(){
+                $('#ytd').click(function(){
+                    $('#qtd').removeClass('active');
+                    $('#ctd').removeClass('active');
+                    $(this).addClass('active');
+                    $('#qtd_content').addClass('hide');
+                    $('#ctd_content').addClass('hide');
+                    setTimeout(function(){
+                        $('#ytd_content').removeClass('hide');
+                    }, 300);
+                });
+                $('#qtd').click(function(){
+                    $('#ytd').removeClass('active');
+                    $('#ctd').removeClass('active');
+                    $(this).addClass('active');
+                    $('#ytd_content').addClass('hide');
+                    $('#ctd_content').addClass('hide');
+                    setTimeout(function(){
+                        $('#qtd_content').removeClass('hide');
+                    }, 300);
+                });
+                $('#ctd').click(function(){
+                    $('#ytd').removeClass('active');
+                    $('#qtd').removeClass('active');
+                    $(this).addClass('active');
+                    $('#ytd_content').addClass('hide');
+                    $('#qtd_content').addClass('hide');
+                    setTimeout(function(){
+                        $('#ctd_content').removeClass('hide');
+                    }, 300);
+                });
+                $('body').click(function(event){
+                    if($(event.target).is('.filter-select *')){
+                        $('.filter-select').removeClass('active');
+                        $(event.target).parents('.filter-select').addClass('active');
+                        $('.filter-select a').click(function(){
+                            $('.filter-select a .option.name').removeClass('active');
+                            $(this).find('.option.name').addClass('active');
+                            $(this).parents('.filter-select').find('.select.name').text($(this).text());
+                        });
+                    } else {
+                        $('.filter-select').removeClass('active');
+                    }
+                });
+                $('#inp_date_from').change(function() {
+                    $('#txt_date_from').html($(this).val());
+                });
+                $('#inp_date_to').change(function() {
+                    $('#txt_date_to').html($(this).val());
+                });
+                $('#followups_list').slimScroll({
+                    width: '355px',
+                    height: '288px',
+                    size: '10px',
+                    distance: '135px',
+                    color: '#fff',
+                    opacity: 1,
+                    alwaysVisible: true,
+                    railVisible: true,
+                    railColor: '#fff',
+                    railOpacity: 0.35,
+                    wheelStep: 1,
+                    disableFadeOut: true
+                });
+                $('#inp_date_from').datepicker({
+                    dateFormat: 'dd/mm/y',
+                    defaultDate: '+1w',
+                    changeMonth: false,
+                    numberOfMonths: 1,
+                    onClose: function(selectedDate){
+                        $('#inp_date_to').datepicker('option', 'minDate', selectedDate);
+                    }
+                });
+                $('#inp_date_to').datepicker({
+                    dateFormat: 'dd/mm/y',
+                    defaultDate: '+1w',
+                    changeMonth: false,
+                    numberOfMonths: 1,
+                    onClose: function(selectedDate){
+                        $('#inp_date_from').datepicker('option', 'maxDate', selectedDate);
+                    }
+                });
+                $("#pulse").shieldChart({
+                    exportOptions: {
+                        image: false,
+                        print: false
+                    },
+                    primaryHeader: {
+                        text: "Pulse"
+                    },
+                    seriesSettings: {
+                        donut: {
+                            enablePointSelection: true
+                        }
+                    },
+                    tooltipSettings: {
+                        customPointText: "{point.collectionAlias}: {point.y}" + "%"
+                    },
+                    seriesPalette: [
+                        "#e3e3e3",
+                        "#77c06e",
+                        "#faf858",
+                        "#f6c35a",
+                        "#ec7652"
+                    ],
+                    dataSeries: [{
+                        seriesType: "donut",
+                        collectionAlias: "Pulse",
+                        data: [
+                            ["Not Assigned", 10.2],
+                            ["Green", 70.6],
+                            ["Yellow", 10],
+                            ["Orange", 2.1],
+                            ["Red", 1.4]
+                        ]
+                    }]
+                });
+                $("#socialevents").shieldChart({
+                    exportOptions: {
+                        image: false,
+                        print: false
+                    },
+                    seriesSettings: {
+                        bar: {
+                            stackMode: "normal"
+                        }
+                    },
+                    axisX: {
+                        drawColor: "transparent",
+                        ticksColor: "transparent",
+                        categoricalValues: [
+                            "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr"
+                        ]
+                    },
+                    primaryHeader: {
+                        text: "Social Events"
+                    },
+                    chartLegend: {
+                        enabled: false
+                    },
+                    seriesPalette: [
+                        "#77c06e",
+                        "#b0d56e",
+                        "#ec7652",
+                        "#f6c35a",
+                        "#64c6e9"
+                    ],
+                    dataSeries: [{
+                        seriesType: "bar",
+                        collectionAlias: "Conference",
+                        data: [5, 7, 5, 6, 9, 9, 3]
+                    }, {
+                        seriesType: "bar",
+                        collectionAlias: "Executive Lunch/Dinner",
+                        data: [4, 7, 2, 1, 4, 6, 9]
+                    }, {
+                        seriesType: "bar",
+                        collectionAlias: "Gift",
+                        data: [2, 4, 3, 7, 9, 2, 2]
+                    }, {
+                        seriesType: "bar",
+                        collectionAlias: "Offsite/Retreat",
+                        data: [2, 3, 3, 5, 6, 5, 3]
+                    }, {
+                        seriesType: "bar",
+                        collectionAlias: "Lunch & Learn",
+                        data: [2, 7, 4, 2, 4, 4, 5]
+                    }]
+                });
+                $("#benefits1").shieldChart({
+                    exportOptions: {
+                        image: false,
+                        print: false
+                    },
+                    primaryHeader: {
+                        text: "Benefits"
+                    },
+                    seriesSettings: {
+                        donut: {
+                            enablePointSelection: true
+                        }
+                    },
+                    tooltipSettings: {
+                        customPointText: "{point.collectionAlias}: {point.y}" + "%"
+                    },
+                    seriesPalette: [
+                        "#e3e3e3",
+                        "#77c06e"
+                    ],
+                    dataSeries: [{
+                        seriesType: "donut",
+                        collectionAlias: "MultiSport",
+                        data: [
+                            ["Not Assigned", 14.9],
+                            ["MultiSport", 85.1],
+                        ]
+                    }]
+                });
+                $("#benefits2").shieldChart({
+                    exportOptions: {
+                        image: false,
+                        print: false
+                    },
+                    primaryHeader: {
+                        text: "Benefits"
+                    },
+                    seriesSettings: {
+                        donut: {
+                            enablePointSelection: true
+                        }
+                    },
+                    tooltipSettings: {
+                        customPointText: "{point.collectionAlias}: {point.y}"
+                    },
+                    seriesPalette: [
+                        "#e3e3e3",
+                        "#64c6e9"
+                    ],
+                    dataSeries: [{
+                        seriesType: "donut",
+                        collectionAlias: "LUX MED",
+                        data: [
+                            ["Not Assigned", 24.4],
+                            ["LUX MED", 75.6],
+                        ]
+                    }]
+                });
+                $("#benefits3").shieldChart({
+                    exportOptions: {
+                        image: false,
+                        print: false
+                    },
+                    primaryHeader: {
+                        text: "Benefits"
+                    },
+                    seriesSettings: {
+                        donut: {
+                            enablePointSelection: true
+                        }
+                    },
+                    tooltipSettings: {
+                        customPointText: "{point.collectionAlias}: {point.y}"
+                    },
+                    seriesPalette: [
+                        "#e3e3e3",
+                        "#ec7652"
+                    ],
+                    dataSeries: [{
+                        seriesType: "donut",
+                        collectionAlias: "Life Insurance",
+                        data: [
+                            ["Not Assigned", 84.7],
+                            ["Life Insurance", 15.3],
+                        ]
+                    }]
+                });
+                $("#touchpoints").shieldChart({
+                    exportOptions: {
+                        image: false,
+                        print: false
+                    },
+                    seriesSettings: {
+                        bar: {
+                            stackMode: "normal"
+                        }
+                    },
+                    axisX: {
+                        drawColor: "transparent",
+                        ticksColor: "transparent",
+                        categoricalValues: [
+                            "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr"
+                        ]
+                    },
+                    primaryHeader: {
+                        text: "Touch Points"
+                    },
+                    chartLegend: {
+                        enabled: false
+                    },
+                    seriesPalette: [
+                        "#64c6e9",
+                        "#f6c35a",
+                        "#ec7652",
+                        "#b0d56e",
+                        "#77c06e"
+                    ],
+                    dataSeries: [{
+                        seriesType: "bar",
+                        collectionAlias: "One-On-One",
+                        data: [4, 7, 2, 1, 4, 6, 9]
+                    }, {
+                        seriesType: "bar",
+                        collectionAlias: "Promotion",
+                        data: [2, 4, 3, 7, 9, 2, 2]
+                    }, {
+                        seriesType: "bar",
+                        collectionAlias: "Social Gathering",
+                        data: [5, 7, 5, 6, 9, 9, 3]
+                    }, {
+                        seriesType: "bar",
+                        collectionAlias: "Tech. Night",
+                        data: [2, 7, 4, 2, 4, 4, 5]
+                    }, {
+                        seriesType: "bar",
+                        collectionAlias: "Training",
+                        data: [2, 3, 3, 5, 6, 5, 3]
+                    }]
+                });
+            });
+        </script>
+    </body>
+</html>
