@@ -57,22 +57,43 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="async.js" />
-    <Content Include="HrDashboard.js" />
+    <Content Include="css\styles.css">
+      <DependentUpon>styles.less</DependentUpon>
+    </Content>
+    <Content Include="css\styles.min.css">
+      <DependentUpon>styles.less</DependentUpon>
+    </Content>
+    <Content Include="index2.html" />
+    <Content Include="js\async.min.js" />
+    <Content Include="js\HrDashboard.js" />
     <Content Include="index.html" />
-    <Content Include="jquery-1.10.2.min.js" />
-    <None Include="linq-vsdoc.js" />
-    <Content Include="linq.js" />
-    <Content Include="linq.min.js" />
-    <Content Include="retentionRate.js" />
-    <Content Include="SDK.JQuery.js" />
-    <Content Include="SDK.MetaData.js" />
-    <Content Include="style.css">
-      <DependentUpon>style.less</DependentUpon>
+    <Content Include="js\HrDashboard.min.js">
+      <DependentUpon>HrDashboard.js</DependentUpon>
     </Content>
-    <Content Include="style.min.css">
-      <DependentUpon>style.less</DependentUpon>
+    <Content Include="js\jquery-1.10.2.min.js" />
+    <Content Include="css\jquery-ui.less" />
+    <Content Include="css\main.less" />
+    <Content Include="css\normalize.less" />
+    <Content Include="css\rules.less" />
+    <Content Include="css\shield-ui.less" />
+    <Content Include="css\styles.less" />
+    <Content Include="js\HrDashboard.min.js.map">
+      <DependentUpon>HrDashboard.js</DependentUpon>
     </Content>
+    <Content Include="js\jquery-ui.min.js" />
+    <Content Include="js\knockout-3.0.0.min.js" />
+    <Content Include="js\linq.min.js" />
+    <Content Include="js\modernizr.min.js" />
+    <Content Include="js\SDK.JQuery.js" />
+    <Content Include="js\SDK.JQuery.min.js">
+      <DependentUpon>SDK.JQuery.js</DependentUpon>
+    </Content>
+    <Content Include="js\SDK.MetaData.js" />
+    <Content Include="js\SDK.MetaData.min.js">
+      <DependentUpon>SDK.MetaData.js</DependentUpon>
+    </Content>
+    <Content Include="js\shield-ui.min.js" />
+    <Content Include="js\slimscroll.min.js" />
     <Content Include="test.html" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -80,7 +101,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="style.less" />
+    <Content Include="js\SDK.JQuery.min.js.map">
+      <DependentUpon>SDK.JQuery.js</DependentUpon>
+    </Content>
+    <Content Include="js\SDK.MetaData.min.js.map">
+      <DependentUpon>SDK.MetaData.js</DependentUpon>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

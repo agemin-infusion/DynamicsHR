@@ -1,0 +1,231 @@
+.border-radius( @radius: @def-radius ) {
+	-webkit-border-radius: @radius;
+	-moz-border-radius: @radius;
+	border-radius: @radius;
+}
+
+.border-radius-top( @radius: @def-radius ) {
+	-webkit-border-top-left-radius: @radius;
+	-webkit-border-top-right-radius: @radius;
+	-moz-border-radius-topleft: @radius;
+	-moz-border-radius-topright: @radius;
+	border-top-left-radius: @radius;
+	border-top-right-radius: @radius;
+}
+
+.border-radius-bottom( @radius: @def-radius ) {
+	-webkit-border-bottom-right-radius: @radius;
+	-webkit-border-bottom-left-radius: @radius;
+	-moz-border-radius-bottomright: @radius;
+	-moz-border-radius-bottomleft: @radius;
+	border-bottom-right-radius: @radius;
+	border-bottom-left-radius: @radius;
+}
+
+.border-radius-left( @radius: @def-radius ) {
+	-webkit-border-top-left-radius: @radius;
+	-webkit-border-bottom-left-radius: @radius;
+	-moz-border-radius-topleft: @radius;
+	-moz-border-radius-bottomleft: @radius;
+	border-top-left-radius: @radius;
+	border-bottom-left-radius: @radius;
+}
+
+.border-radius-right( @radius: @def-radius ) {
+	-webkit-border-top-right-radius: @radius;
+	-webkit-border-bottom-right-radius: @radius;
+	-moz-border-radius-topright: @radius;
+	-moz-border-radius-bottomright: @radius;
+	border-top-right-radius: @radius;
+	border-bottom-right-radius: @radius;
+}
+
+.border-radius-top-left( @radius: @def-radius ) {
+	-webkit-border-top-left-radius: @radius;
+	-moz-border-radius-topleft: @radius;
+	border-top-left-radius: @radius;
+}
+
+.border-radius-top-right( @radius: @def-radius ) {
+	-webkit-border-top-right-radius: @radius;
+	-moz-border-radius-topright: @radius;
+	border-top-right-radius: @radius;
+}
+
+.border-radius-bottom-left( @radius: @def-radius ) {
+	-webkit-border-bottom-left-radius: @radius;
+	-moz-border-radius-bottomleft: @radius;
+	border-bottom-left-radius: @radius;
+}
+
+.border-radius-bottom-right( @radius: @def-radius ) {
+	-webkit-border-bottom-right-radius: @radius;
+	-moz-border-radius-bottomright: @radius;
+	border-bottom-right-radius: @radius;
+}
+
+.box-shadow( @arg1, @arg2, @arg3 ) {
+	-webkit-box-shadow: @arg1, @arg2, @arg3;
+	-moz-box-shadow: @arg1, @arg2, @arg3;
+	box-shadow: @arg1, @arg2, @arg3;
+}
+
+.box-shadow( @arguments ) {
+	-webkit-box-shadow: @arguments;
+	-moz-box-shadow: @arguments;
+	box-shadow: @arguments;
+}
+
+.box-inset-shadow( @arg1, @arg2, @arg3 ) {
+  -webkit-box-shadow: inset @arg1, @arg2, @arg3;
+  -moz-box-shadow: inset @arg1, @arg2, @arg3;
+  box-shadow: inset @arg1, @arg2, @arg3;
+}
+
+.box-inset-shadow( @arguments ) {
+	-webkit-box-shadow: inset @arguments;
+	-moz-box-shadow: inset @arguments;
+	box-shadow: inset @arguments;
+}
+
+.linear-gradient-ttb( @from, @to ) {
+	background: @from;
+	background: -webkit-gradient( linear, 0 0, 0 bottom, from( @from ), to( @to ) );
+	background: -webkit-linear-gradient( @from, @to );
+	background: -moz-linear-gradient( @from, @to );
+	background: -ms-linear-gradient( @from, @to );
+	background: -o-linear-gradient( @from, @to );
+	background: linear-gradient( @from, @to );
+}
+
+.linear-gradient-ltr( @from, @to ) {
+    background: @from;
+    background: -webkit-gradient( linear, right top, left top, from( @from ), to( @to ) );
+    background: -webkit-linear-gradient( left, @from 0%, @to 100% );
+    background: -moz-linear-gradient( left, @from 0%, @to 100% );
+    background: -ms-linear-gradient( left, @from 0%, @to 100% );
+    background: -o-linear-gradient( left, @from 0%, @to 100% );
+    background: linear-gradient( left, @from 0%, @to 100% );
+}
+
+.box-sizing( @sizing: border-box ) {
+	-webkit-box-sizing: @sizing;
+	-moz-box-sizing: @sizing;
+	box-sizing: @sizing;
+}
+
+.no-select() {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.opacity( @opacity ) {
+	opacity: @opacity;
+}
+
+.transform( @arguments ) {
+    -webkit-transform: @arguments;
+    -moz-transform: @arguments;
+    -o-transform: @arguments;
+    transform: @arguments;
+}
+
+.rotate( @angle ) {
+	-webkit-transform: rotate( @angle );
+	-moz-transform: rotate( @angle );
+	-o-transform: rotate( @angle );
+	transform: rotate( @angle );
+}
+
+.scale( @value ) {
+    -webkit-transform: scale( @value );
+    -moz-transform: scale( @value );
+    -o-transform: scale( @value );
+    transform: scale( @value );
+}
+
+.scale-center( @value ) {
+    -webkit-transform: scale( @value );
+    -moz-transform: scale( @value );
+    -o-transform: scale( @value );
+    transform: scale( @value );
+    -webkit-transform-origin: center center;
+    transform-origin: center center;
+}
+
+.scaleX( @value ) {
+    -webkit-transform: scaleX( @value );
+    -moz-transform: scaleX( @value );
+    -o-transform: scaleX( @value );
+    transform: scaleX( @value );
+}
+
+.scaleY( @value ) {
+    -webkit-transform: scaleY( @value );
+    -moz-transform: scaleY( @value );
+    -o-transform: scaleY( @value );
+    transform: scaleY( @value );
+}
+
+.appearance( @value ) {
+	-webkit-appearance: @value;
+	-moz-appearance: @value;
+	appearance: @value;
+}
+
+.transition( @arg1, @arg2, @arg3 ) {
+    -webkit-transition: @arg1, @arg2, @arg3;
+    -moz-transition: @arg1, @arg2, @arg3;
+    -ms-transition: @arg1, @arg2, @arg3;
+    -o-transition: @arg1, @arg2, @arg3;
+    transition: @arg1, @arg2, @arg3;
+}
+
+.transition( @arg1, @arg2 ) {
+    -webkit-transition: @arg1, @arg2;
+    -moz-transition: @arg1, @arg2;
+    -ms-transition: @arg1, @arg2;
+    -o-transition: @arg1, @arg2;
+    transition: @arg1, @arg2;
+}
+
+.transition( @arguments ) {
+	-webkit-transition: @arguments;
+	-moz-transition: @arguments;
+	-ms-transition: @arguments;
+	-o-transition: @arguments;
+	transition: @arguments;
+}
+
+.animation( @arg1, @arg2, @arg3 ) {
+    -webkit-animation-name: @arg1;
+    -moz-animation-name:@arg1;
+    -o-animation-name: @arg1;
+    animation-name: @arg1;
+
+    -webkit-animation-duration: @arg2;
+    -moz-animation-duration: @arg2;
+    -o-animation-duration: @arg2;
+    animation-duration: @arg2;
+
+    -webkit-animation-timing-function: @arg3;
+    -moz-animation-timing-function: @arg3;
+    -o-animation-timing-function: @arg3;
+    animation-timing-function: @arg3;
+
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+
+    -webkit-animation-iteration-count: 1;
+    -moz-animation-iteration-count: 1;
+    -ms-animation-iteration-count: 1;
+    -o-animation-iteration-count: 1;
+    animation-iteration-count: 1;
+}
