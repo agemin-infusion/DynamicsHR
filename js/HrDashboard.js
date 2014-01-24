@@ -230,7 +230,7 @@
         var taskData = new Array();
         SDK.JQuery.retrieveMultipleRecords(
          "Task",
-         "$select=ActivityId,Subject,StateCode,RegardingObjectId&$filter=RegardingObjectId ne null and StateCode/Value eq " + openTaskOption,
+         "$select=ActivityId,Subject,StateCode,RegardingObjectId&$filter=RegardingObjectId ne null and StateCode/Value eq " + openTaskOption + "&$orderby=CreatedOn",
 
          function (tasks) {
              taskData = taskData.concat(tasks);
@@ -388,7 +388,9 @@
     }
 
     function initializeTasks(tasks, taskMetadata) {
-        self.allTasks = tasks.Select(function (x) {
+        self.allTasks = tasks
+            .Where("$.RegardingObjectId.LogicalName == 'ihr_employee'")
+            .Select(function (x) {
             return new Task(x.ActivityId, x.Subject, x.RegardingObjectId.Id);
         }).ToArray();
 
@@ -628,12 +630,12 @@
     
     function FollowUp(name, url, title, isRed, isOrange, isTask) {
         var self = this;
-        self.name = ko.observable(name);
-        self.url = ko.observable(url);
+        self.name = name;
+        self.url = url;
         self.title = title;
-        self.isRed = ko.observable(isRed);
-        self.isOrange = ko.observable(isOrange);
-        self.isTask = ko.observable(isTask);
+        self.isRed = isRed;
+        self.isOrange = isOrange;
+        self.isTask = isTask;
     }
 
     // update functions
@@ -765,10 +767,16 @@
     
     function UpateFollowUps() {
         var currEmployeesEnumerable = Enumerable.From(self.filteredActiveEmployees());
-        var reds = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Red'").value + "'").Select(function (e) { return new FollowUp(e.name, "#", "Red Pulse", true, false, false); });
-        var oranges = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Orange'").value + "'").Select(function (e) { return new FollowUp(e.name, "Orange Pulse", "#", false, true, false); });
+        
+        var reds = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Red'").value + "'").Select(function (e) { return new FollowUp(e.name, e.id, "Red Pulse", true, false, false); });
+        var oranges = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Orange'").value + "'").Select(function (e) { return new FollowUp(e.name, e.id, "Orange Pulse", false, true, false); });
+        
+        var tasksEnumerable = Enumerable.From(self.allTasks);
+        var tasks = tasksEnumerable.Join(currEmployeesEnumerable, "$.employeeId", "$.id", function (t, e) {
+            return new FollowUp(e.name, t.id, t.subject, false, false, true);
+        });
 
-        var followUps = reds.Concat(oranges).ToArray();
+        var followUps = reds.Concat(oranges).Concat(tasks).ToArray();
 
         self.followUps(followUps);
     }

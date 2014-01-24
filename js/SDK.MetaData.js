@@ -461,7 +461,7 @@ SDK.Metadata = SDK.Metadata || { __namespace: true };
  function _getUrl() {
      var context = _Context();
      if (context != null) {
-         return this.context.getClientUrl();
+         return context.getClientUrl();
      }
      else {
          return "https://infn365.crm4.dynamics.com";

@@ -24,19 +24,19 @@ SDK.JQuery = {
   ///</summary>
   ///<returns>Context</returns>
   if (typeof GetGlobalContext != "undefined") {
-	return GetGlobalContext();
+      return GetGlobalContext();
   }
   else {
 	if (typeof Xrm != "undefined") {
-		return Xrm.Page.context;
+	    return Xrm.Page.context;
 	}
 	else {
 		if (typeof window.parent.Xrm != "undefined") {
 			return window.parent.Xrm.Page.context;
 		}
 		else {
-			return null;
-		} 
+		    return null;
+		}
 	}
 
 	}
@@ -61,7 +61,7 @@ SDK.JQuery = {
   ///<returns>String</returns>
   var context = this._context();
   if(context != null){
-  	return this._context().getClientUrl();
+  	return context.getClientUrl();
   }
   else{
 	return "https://infn365.crm4.dynamics.com";
