@@ -8,9 +8,10 @@
     self.allEmployeesEnumerable = null;
     self.employeeMetadata = null;
     self.employeeTrailMetadata = null;
+    
     self.allEventsEnumerable = null;
     self.eventMetadata = null;
-    
+
     self.pulseOptionsEnumerable = null;
     self.benefitOptionsEnumerable = null;
     self.eventTypesEnumerable = null;
@@ -21,7 +22,11 @@
     
     self.allActiveEmployees = [];
     self.filteredActiveEmployees = ko.observable([]);
-
+    
+    self.taskMetadata = null;
+    self.allTasksEnumerable = null;
+    self.allTasks = [];
+    
     self.isLoading = ko.observable(false);
 
     // async methods
@@ -33,6 +38,10 @@
                 employeeTrailMetadata: function (callback) { getEmployeeTrailEntityMetadata(callback, loadData); },
                 events: function (callback) { getEventData(callback, loadData); },
                 eventMetadata: function (callback) { getEventEntityMetadata(callback, loadData); },
+                taskMetadata: function (callback) { getTaskEntityMetadata(callback, loadData); },
+                tasks: ['taskMetadata', function (callback, results) {
+                    getTaskData(callback, loadData, results.taskMetadata);
+                }],
                 
                 benefitOptions: function (callback) { getBenefitData(callback, loadData); },
 
@@ -56,12 +65,17 @@
                     next();
                 }],
                 
+                initializeTasks: ['tasks', 'taskMetadata', function (next, results) {
+                    initializeTasks(results.tasks, results.taskMetadata);
+                    next();
+                }],
+                
                 initializeEmployees: ['employees', 'employeeMetadata', 'employeeTrailMetadata', 'events', 'benefitOptions', 'initializePulseOptions', 'initializeEventOptions', function (next, results) {
                     initializeEmployees(results.employees, results.employeeMetadata, results.employeeTrailMetadata, results.events);
                     next();
                 }],
                 
-                finish: ['initializeEmployees', function (next, results) {
+                finish: ['initializeEmployees', 'initializeTasks', function (next, results) {
                     finish();
                     next();
                 }]
@@ -75,6 +89,7 @@
     };
     
     function finish() {
+        self.clearFilters();
         self.isLoading(false);
     }
 
@@ -160,8 +175,8 @@
          "ihr_event",
          "$select=ihr_Date,ihr_Type,ihr_eventId,ihr_IsSocialEvent,ihr_IsTouchpoint,ihr_ihr_employee_ihr_event&$expand=ihr_ihr_employee_ihr_event&$filter=ihr_Date ge " + startDateStr + " and ihr_Date le " + endDateStr,
 
-         function (employees) {
-             eventData = eventData.concat(employees);
+         function (events) {
+             eventData = eventData.concat(events);
          },
          function (err) {
              callback(err, null);
@@ -187,6 +202,48 @@
         function (err) {
             callback(err, null);
         });
+    }
+    
+    function getTaskEntityMetadata(callback, refresh) {
+        if (self.taskMetadata && !refresh) {
+            callback(null, self.taskMetadata);
+            return;
+        }
+
+        SDK.Metadata.RetrieveEntity(SDK.Metadata.EntityFilters.Attributes, "Task", null, false, function (data) {
+            self.taskMetadata = data;
+            callback(null, data);
+        },
+        function (err) {
+            callback(err, null);
+        });
+    }
+    
+    function getTaskData(callback, refresh, taskMetadata) {
+        if (self.allTasksEnumerable && !refresh) {
+            callback(null, self.allTasksEnumerable);
+            return;
+        }
+
+        var openTaskOption = Enumerable.From(Enumerable.From(taskMetadata.Attributes).Where('$.SchemaName === "StateCode"').Single().OptionSet.Options).Single('$.Label.UserLocalizedLabel.Label == "Open"').Value;
+        
+        var taskData = new Array();
+        SDK.JQuery.retrieveMultipleRecords(
+         "Task",
+         "$select=ActivityId,Subject,StateCode,RegardingObjectId&$filter=RegardingObjectId ne null and StateCode/Value eq " + openTaskOption,
+
+         function (tasks) {
+             taskData = taskData.concat(tasks);
+         },
+         function (err) {
+             callback(err, null);
+         },
+         function (completed) {
+             var taskEnumerable = Enumerable.From(taskData);
+             self.allTasksEnumerable = taskEnumerable;
+             callback(null, self.allTasksEnumerable);
+         }
+       );
     }
     
     function getBenefitData(callback, refresh) {
@@ -328,31 +385,16 @@
         }).ToArray();
         
         self.allActiveEmployees = Enumerable.From(self.allEmployees).Where("$.isActive").ToArray();
-
-        self.clearFilters();
     }
 
-    function fillRedPeople(employees, entityMetadata) {
-        return;
-        var attPulse = Enumerable
-         .From(entityMetadata.Attributes)
-         .Where(function (x) { return x.SchemaName == "ihr_Pulse" })
-         .Single();
+    function initializeTasks(tasks, taskMetadata) {
+        self.allTasks = tasks.Select(function (x) {
+            return new Task(x.ActivityId, x.Subject, x.RegardingObjectId.Id);
+        }).ToArray();
 
-        var redOption = Enumerable.From(attPulse.OptionSet.Options)
-           .Single(function (x) { return x.Label.UserLocalizedLabel.Label == "Red"; }).Value;
-        //TODO: Add orange
-
-        var redPeopleList = $("#redPeople");
-        redPeopleList.empty();
-        employees
-        .Where(function (x) { return x.ihr_Pulse.Value == redOption })
-        .ForEach(function (x) {
-            redPeopleList.append("<li>" + x.ihr_fullname + "</li>");
-
-        });
+        self.allActiveEmployees = Enumerable.From(self.allEmployees).Where("$.isActive").ToArray();
     }
-    
+
     // knockout bindings
     self.managerFilter = ko.observable(new Filter("Manager", function(employee) { return employee.managerId; }));
     self.filterByManager = function (manager) {
@@ -483,6 +525,13 @@
         self.isTouchpoint = isTouchpoint;
     }
     
+    function Task(id, subject, employeeId) {
+        var self = this;
+        self.id = id;
+        self.subject = subject;
+        self.employeeId = employeeId;
+    }
+    
     function Turnover(name, from, to) {
         var self = this;
         self.name = ko.observable(name);
@@ -577,10 +626,11 @@
         };
     }
     
-    function FollowUp(name, url, isRed, isOrange, isTask) {
+    function FollowUp(name, url, title, isRed, isOrange, isTask) {
         var self = this;
         self.name = ko.observable(name);
         self.url = ko.observable(url);
+        self.title = title;
         self.isRed = ko.observable(isRed);
         self.isOrange = ko.observable(isOrange);
         self.isTask = ko.observable(isTask);
@@ -715,8 +765,8 @@
     
     function UpateFollowUps() {
         var currEmployeesEnumerable = Enumerable.From(self.filteredActiveEmployees());
-        var reds = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Red'").value + "'").Select(function (e) { return new FollowUp(e.name, "#", true, false, false); });
-        var oranges = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Orange'").value + "'").Select(function (e) { return new FollowUp(e.name, "#", false, true, false); });
+        var reds = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Red'").value + "'").Select(function (e) { return new FollowUp(e.name, "#", "Red Pulse", true, false, false); });
+        var oranges = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Orange'").value + "'").Select(function (e) { return new FollowUp(e.name, "Orange Pulse", "#", false, true, false); });
 
         var followUps = reds.Concat(oranges).ToArray();
 
