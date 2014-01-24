@@ -3,20 +3,37 @@
 (function() {
     var self = this;
 
+    var fiscalYearStartMonth = 11;
+
     self.allEmployeesEnumerable = null;
-    self.allMetadata = null;
+    self.employeeMetadata = null;
+    self.employeeTrailMetadata = null;
+    self.allEventsEnumerable = null;
+    self.eventMetadata = null;
     
     self.pulseOptionsEnumerable = null;
     self.benefitOptionsEnumerable = null;
+    self.eventTypesEnumerable = null;
+    self.eventMonths = [];
+
     self.allEmployees = [];
+    self.filteredAllEmployees = ko.observable([]);
+    
     self.allActiveEmployees = [];
-    self.filteredEmployees = ko.observable([]);
+    self.filteredActiveEmployees = ko.observable([]);
+
+    self.isLoading = ko.observable(false);
 
     // async methods
-    self.refresh = function(loadData) {
+    self.refresh = function (loadData) {
+        self.isLoading(true);
         async.auto({
                 employees: function (callback) { getEmployeeData(callback, loadData); },
-                employeeMetadata: function (callback) { getEmployeeEntityMetaData(callback, loadData); },
+                employeeMetadata: function (callback) { getEmployeeEntityMetadata(callback, loadData); },
+                employeeTrailMetadata: function (callback) { getEmployeeTrailEntityMetadata(callback, loadData); },
+                events: function (callback) { getEventData(callback, loadData); },
+                eventMetadata: function (callback) { getEventEntityMetadata(callback, loadData); },
+                
                 benefitOptions: function (callback) { getBenefitData(callback, loadData); },
 
                 managerFilter: ['employees', function(next, results) {
@@ -34,18 +51,18 @@
                     next();
                 }],
 
-                turnover: ['employees', function(next, results) {
-                    calculateRetentionRate(results.employees, new Date('2013.11.01'), new Date(), function(retentionrate) {
-                        $("#retentionRate").html(retentionrate * 100 + "%");
-                        next();
-                    });
-                }],
-                initializeEmployees: ['employees', 'employeeMetadata', 'managerFilter', 'officeAndGroupFilter', 'initializePulseOptions', 'benefitOptions', function (next, results) {
-                    initializeEmployees(results.employees, results.employeeMetadata);
+                initializeEventOptions: ['eventMetadata', function (next, results) {
+                    initializeEventOptions(results.eventMetadata);
                     next();
                 }],
-                redPeople: ['employees', 'employeeMetadata', function(next, results) {
-                    fillRedPeople(results.employees, results.employeeMetadata);
+                
+                initializeEmployees: ['employees', 'employeeMetadata', 'employeeTrailMetadata', 'events', 'benefitOptions', 'initializePulseOptions', 'initializeEventOptions', function (next, results) {
+                    initializeEmployees(results.employees, results.employeeMetadata, results.employeeTrailMetadata, results.events);
+                    next();
+                }],
+                
+                finish: ['initializeEmployees', function (next, results) {
+                    finish();
                     next();
                 }]
             },
@@ -56,6 +73,10 @@
             });
 
     };
+    
+    function finish() {
+        self.isLoading(false);
+    }
 
     function getEmployeeData(callback, refresh) {
         if (self.allEmployeesEnumerable && !refresh) {
@@ -82,14 +103,85 @@
        );
     }
     
-    function getEmployeeEntityMetaData(callback, refresh) {
-        if (self.allMetadata && !refresh) {
-            callback(null, self.allMetadata);
+    function getEmployeeEntityMetadata(callback, refresh) {
+        if (self.employeeMetadata && !refresh) {
+            callback(null, self.employeeMetadata);
             return;
         }
 
         SDK.Metadata.RetrieveEntity(SDK.Metadata.EntityFilters.Attributes, "ihr_employee", null, false, function (data) {
-            self.allMetadata = data;
+            self.employeeMetadata = data;
+            callback(null, data);
+        },
+        function (err) {
+            callback(err, null);
+        });
+    }
+    
+    function getEmployeeTrailEntityMetadata(callback, refresh) {
+        if (self.employeeTrailMetadata && !refresh) {
+            callback(null, self.employeeTrailMetadata);
+            return;
+        }
+
+        SDK.Metadata.RetrieveEntity(SDK.Metadata.EntityFilters.Attributes, "ihr_employeetrail", null, false, function (data) {
+            self.employeeTrailMetadata = data;
+            callback(null, data);
+        },
+        function (err) {
+            callback(err, null);
+        });
+    }
+    
+    function getEventData(callback, refresh) {
+        if (self.allEventsEnumerable && !refresh) {
+            callback(null, self.allEventsEnumerable);
+            return;
+        }
+
+        var now = moment();
+        var startDate = now.clone().startOf("day").startOf("month").subtract(3, "months");
+        var startDateStr = "datetime'" + startDate.format("YYYY-MM-DD") + "T" + startDate.format("HH:mm:ss") + "Z'";
+        var endDate = now.clone().endOf("day").startOf("month").add(2, "months").endOf("month").endOf("day");
+        var endDateStr = "datetime'" + endDate.format("YYYY-MM-DD") + "T" + endDate.format("HH:mm:ss") + "Z'";
+        
+        var months = [startDate.clone()];
+        for (var i = 1; ; i++) {
+            var month = startDate.clone().add(i, "months");
+            if (month.isAfter(endDate))
+                break;
+            months.push(month);
+        }
+
+        self.eventMonths = months;
+
+        var eventData = new Array();
+        SDK.JQuery.retrieveMultipleRecords(
+         "ihr_event",
+         "$select=ihr_Date,ihr_Type,ihr_eventId,ihr_IsSocialEvent,ihr_IsTouchpoint,ihr_ihr_employee_ihr_event&$expand=ihr_ihr_employee_ihr_event&$filter=ihr_Date ge " + startDateStr + " and ihr_Date le " + endDateStr,
+
+         function (employees) {
+             eventData = eventData.concat(employees);
+         },
+         function (err) {
+             callback(err, null);
+         },
+         function (completed) {
+             var eventEnumerable = Enumerable.From(eventData);
+             self.allEventsEnumerable = eventEnumerable;
+             callback(null, self.allEventsEnumerable);
+         }
+       );
+    }
+    
+    function getEventEntityMetadata(callback, refresh) {
+        if (self.eventMetadata && !refresh) {
+            callback(null, self.eventMetadata);
+            return;
+        }
+
+        SDK.Metadata.RetrieveEntity(SDK.Metadata.EntityFilters.Attributes, "ihr_event", null, false, function (data) {
+            self.eventMetadata = data;
             callback(null, data);
         },
         function (err) {
@@ -128,10 +220,11 @@
     }
     
     function initializeManagerFilter(employees) {
-        var optionsManager = employees
+        var optionsManager = [new FilterOption("No manager", null)].concat(
+            employees
             .GroupBy(function (x) { return x.ihr_ManagerId; }, function (x) { return { id: x.ihr_ManagerId.Id }; }, function (x, y) { return new FilterOption(x.Name ? x.Name : "No manager", x.Id); }, function (x) { return x.Id; })
             .Where("$.id() !== null")
-            .ToArray();
+            .ToArray());
         self.managerFilter().options(optionsManager);
     }
     
@@ -142,9 +235,10 @@
             .Where(function (x) { return x.SchemaName == "ihr_Office"; })
             .Single();
 
-        var optionsOffice = Enumerable.From(attOffice.OptionSet.Options)
+        var optionsOffice = [new FilterOption("No office", null)].concat(
+            Enumerable.From(attOffice.OptionSet.Options)
             .Select(function (x) { return new FilterOption(x.Label.UserLocalizedLabel.Label, x.Value); })
-            .ToArray();
+            .ToArray());
 
         self.officeFilter().options(optionsOffice);
 
@@ -154,9 +248,10 @@
           .Where(function (x) { return x.SchemaName == "ihr_Group"; })
           .Single();
 
-        var optionsGroup = Enumerable.From(attGroup.OptionSet.Options)
+        var optionsGroup = [new FilterOption("No group", null)].concat(
+            Enumerable.From(attGroup.OptionSet.Options)
            .Select(function (x) { return new FilterOption(x.Label.UserLocalizedLabel.Label, x.Value); })
-           .ToArray();
+           .ToArray());
 
         self.groupFilter().options(optionsGroup);
     }
@@ -185,55 +280,56 @@
         self.pulseOptionsEnumerable = Enumerable.From(orderedPulse);
     }
     
-    function initializeEmployees(employees, entityMetadata) {
-        var attStateCode = Enumerable
-         .From(entityMetadata.Attributes)
-         .Where(function (x) { return x.SchemaName == "statecode"; })
+    function initializeEventOptions(eventMetadata) {
+        var attType = Enumerable
+         .From(eventMetadata.Attributes)
+         .Where(function (x) { return x.SchemaName == "ihr_Type"; })
          .Single();
 
-        var activeOption = Enumerable.From(attStateCode.OptionSet.Options)
-           .Single(function (x) { return x.Label.UserLocalizedLabel.Label == "Active"; }).Value;
+        var defaults = Enumerable.From([{ name: "Conference", color: "#77c06e" }, { name: "Executive Lunch/Dinner", color: "#b0d56e" }, { name: "Gift", color: "#ec7652" }, { name: "Offsite/Retreat", color: "#f6c35a" }, { name: "Lunch & Learn", color: "#64c6e9" },
+        { name: "One-on-one", color: "#64c6e9" }, { name: "Promotion", color: "#f6c35a" }, { name: "Social Gathering", color: "#ec7652" }, { name: "Tech. Night", color: "#b0d56e" }, { name: "Training", color: "#77c06e" }]);
+        var types = Enumerable.From(attType.OptionSet.Options)
+            .Select(function (x) {
+                var s = defaults.FirstOrDefault(null, function (p) {
+                    return p.name === x.Label.UserLocalizedLabel.Label;
+                });
+
+                var color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+                if (s)
+                    color = s.color;
+
+                return { name: x.Label.UserLocalizedLabel.Label, value: x.Value, color: color };
+            })
+            .ToArray();
+
+        self.eventTypesEnumerable = Enumerable.From(types);
+    }
+    
+    function initializeEmployees(employees, employeeMetadata, employeeTrailMetadata, events) {
+        var activeOption = Enumerable.From(Enumerable.From(employeeMetadata.Attributes).Where('$.SchemaName === "statecode"').Single().OptionSet.Options).Single('$.Label.UserLocalizedLabel.Label == "Active"').Value;
+        var trailActiveOption = Enumerable.From(Enumerable.From(employeeTrailMetadata.Attributes).Where('$.SchemaName === "statecode"').Single().OptionSet.Options).Single('$.Label.UserLocalizedLabel.Label == "Active"').Value;
         
         self.allEmployees = employees.Select(function (x) {
             var benefits = Enumerable.From(x.ihr_ihr_employee_ihr_benefit.results).Select("$.ihr_name").ToArray();
-            return new Employee(x.ihr_employeeId, x.ihr_fullname, x.ihr_ManagerId.Id, x.ihr_Group.Value, x.ihr_Office.Value, x.ihr_Pulse.Value, x.statecode.Value === activeOption, benefits);
+
+            var trials = Enumerable.From(x.ihr_ihr_employee_ihr_employeetrail.results);
+            var startTrail = trials.FirstOrDefault(null, '$.ihr_name == "Start" && $.statecode.Value == ' + trailActiveOption);
+            var startDate = startTrail != null && startTrail.ihr_Date != null ? moment({ y: startTrail.ihr_Date.getFullYear(), M: startTrail.ihr_Date.getMonth(), d: startTrail.ihr_Date.getDate() }) : null;
+            var endTrail = trials.FirstOrDefault(null, '$.ihr_name == "End" && $.statecode.Value == ' + trailActiveOption);
+            var endDate = endTrail != null && endTrail.ihr_Date != null ? moment({ y: endTrail.ihr_Date.getFullYear(), M: endTrail.ihr_Date.getMonth(), d: endTrail.ihr_Date.getDate() }) : null;
+
+            var employeeEvents = events.Where(function(e) {
+                return e.ihr_Date != null && Enumerable.From(e.ihr_ihr_employee_ihr_event.results).Any("$.ihr_employeeId === '" + x.ihr_employeeId + "'");
+            }).Select(function (e) {
+                return new Event(e.ihr_eventId, moment({ y: e.ihr_Date.getFullYear(), M: e.ihr_Date.getMonth(), d: e.ihr_Date.getDate() }), e.ihr_Type.Value, e.ihr_IsSocialEvent, e.ihr_IsTouchpoint);
+            }).ToArray();
+
+            return new Employee(x.ihr_employeeId, x.ihr_fullname, x.ihr_ManagerId.Id, x.ihr_Group.Value, x.ihr_Office.Value, x.ihr_Pulse.Value, x.statecode.Value === activeOption, benefits, startDate, endDate, endTrail != null ? (endTrail.ihr_Reason === "Voluntary") : false, employeeEvents);
         }).ToArray();
         
         self.allActiveEmployees = Enumerable.From(self.allEmployees).Where("$.isActive").ToArray();
 
         self.clearFilters();
-    }
-
-    function calculateRetentionRate(employeesEnumerable, periodStartDate, periodEndDate, callback) {
-        return;
-        // (EmployeeStartDate is null || EmployeeStartDate < PeriodStartDate) && (EmployeeEndDate is not NULL && EmployeeEndDate between PeriodStartDate and PeriodEndDate) && Reason == Volountary
-        var numberOfEmployeesWhoLeft = employeesEnumerable
-            .Count(function (x) { return (x.ihr_StartDate == null || x.ihr_StartDate < periodStartDate) && (x.ihr_EndDate != null && x.ihr_EndDate >= periodStartDate && x.ihr_EndDate < periodEndDate) });
-
-        // (EmployeeStartDate == null || EmployeeStartDate before PeriodStartDate ) && (EmployeeEndDate is null || EmployeeEndDate before PeriodStartDate)
-        var startNumber = countActiveEmployeesForDate(employeesEnumerable, periodStartDate);
-
-        // ( End date is null || EndDate is > PeriodEndDate)
-        var endNumber = employeesEnumerable
-            .Count(function (x) { return (x.ihr_StartDate == null || x.ihr_StartDate < periodStartDate) && (x.ihr_EndDate == null || x.ihr_EndDate < periodStartDate) });
-
-        var retentionRateValue = numberOfEmployeesWhoLeft / ((startNumber + endNumber) / 2);
-
-        callback(retentionRateValue);
-    }
-
-    function countActiveEmployeesForDate(employees, date) {
-        return;
-        employees.Count(function (x) {
-            if (Object.prototype.toString.call(x.ihr_ihr_employee_ihr_employeetrail.results) === '[object Array]') {
-                if (x.ihr_ihr_employee_ihr_employeetrail.results.length == 2) {
-                    var trails = Enumerable.From(x.ihr_ihr_employee_ihr_employeetrail.results)
-                    .Where(function (tr) { return tr.statecode.Value == 1 && tr.ihr_date <= date; })
-                    .Max(function (tr) { return tr.ihr_date; })
-                    
-                }
-            } 
-        });
     }
 
     function fillRedPeople(employees, entityMetadata) {
@@ -257,7 +353,7 @@
         });
     }
     
-    // knockout bindings    
+    // knockout bindings
     self.managerFilter = ko.observable(new Filter("Manager", function(employee) { return employee.managerId; }));
     self.filterByManager = function (manager) {
         self.managerFilter().setOption(manager.name());
@@ -286,32 +382,50 @@
     self.computedFilters.subscribe(function () {
         var filterEnumerable = Enumerable.From(self.filters);
 
-        // filter employees
-        var filteredEmployees = Enumerable.From(self.allActiveEmployees).Where(function(e) {
+        // filter active employees
+        var filteredActiveEmployees = Enumerable.From(self.allActiveEmployees).Where(function(e) {
             return filterEnumerable.All(function(f) {
                 return f().filterFunction(e);
             });
         }).ToArray();
+        self.filteredActiveEmployees(filteredActiveEmployees);
         
-        self.filteredEmployees(filteredEmployees);
+        // filter all employees
+        var filteredAllEmployees = Enumerable.From(self.allEmployees).Where(function (e) {
+            return filterEnumerable.All(function (f) {
+                return f().filterFunction(e);
+            });
+        }).ToArray();
+        self.filteredAllEmployees(filteredAllEmployees);
     });
     
-    self.filteredEmployeesThrottled = ko.computed(self.filteredEmployees).extend({ throttle: 100 });
-    self.filteredEmployeesThrottled.subscribe(function () {
+    self.filteredActiveEmployeesThrottled = ko.computed(self.filteredActiveEmployees).extend({ throttle: 100 });
+    self.filteredActiveEmployeesThrottled.subscribe(function () {
         UpdatePulseChart();
         UpdateBenefitsChart();
+        UpdateEventsChart("socialevents", "Social Events", "$.isSocial");
+        UpdateEventsChart("touchpoints", "Touch Points", "$.isTouchpoint");
+        UpateFollowUps();
     });
 
+    self.filteredAllEmployeesThrottled = ko.computed(self.filteredAllEmployees).extend({ throttle: 100 });
+    self.filteredAllEmployeesThrottled.subscribe(function() {
+        self.turnovers().updateAll(self.filteredAllEmployees());
+    });
+
+    self.turnovers = ko.observable(new Turnovers());
+    self.followUps = ko.observableArray([]);
+    
     // knockout models
     function Filter(name, propertySelector) {
         var self = this;
         self.filterName = name;
         self.name = ko.observable(name);
         self.options = ko.observableArray([]);
-        self.selectedId = ko.observable(null);
+        self.selectedId = ko.observable("NA");
         self.selectedIdStr = ko.observable();
         self.filterFunction = function(employee) {
-            return self.selectedId() === null || self.selectedId() === propertySelector(employee);
+            return self.selectedId() === "NA" || self.selectedId() === propertySelector(employee);
         };
         
         self.setOption = function(name) {
@@ -328,7 +442,7 @@
         
         self.reset = function () {
             self.name(self.filterName);
-            self.selectedId(null);
+            self.selectedId("NA");
             self.selectedIdStr("");
             $.each(self.options(), function (i, e) {
                 e.isActive(false);
@@ -343,7 +457,7 @@
         self.isActive = ko.observable(false);
     }
     
-    function Employee(id, name, managerId, groupId, officeId, pulseId, isActive, benefits) {
+    function Employee(id, name, managerId, groupId, officeId, pulseId, isActive, benefits, startDate, endDate, endVoluntary, events) {
         var self = this;
         self.id = id;
         self.name = name;
@@ -353,19 +467,136 @@
         self.officeId = officeId;
         self.isActive = isActive;
         self.benefits = benefits;
+        self.startDate = startDate;
+        self.endDate = endDate;
+        self.endVoluntary = endVoluntary;
+        self.events = events ? events : [];
+    }
+    
+    function Event(id, date, typeId, isSocial, isTouchpoint) {
+        var self = this;
+        self.id = id;
+        self.date = date;
+        self.dateDesc = date.format("MMMYY");
+        self.typeId = typeId;
+        self.isSocial = isSocial;
+        self.isTouchpoint = isTouchpoint;
+    }
+    
+    function Turnover(name, from, to) {
+        var self = this;
+        self.name = ko.observable(name);
+        self.value = ko.observable("?");
+        self.from = from;
+        self.to = to;
+        self.lastEmployees = [];
+
+        self.update = function (employees) {
+            if (!employees)
+                employees = self.lastEmployees;
+
+            self.lastEmployees = employees;
+            
+            if (!employees || !self.from || !self.to || !self.from.isValid() || !self.to.isValid())
+                return;
+
+            var countFrom = Enumerable.From(employees).Count(function (x) {
+                return x.startDate !== null && (x.startDate.isBefore(self.from) || x.startDate.isSame(self.from, 'day')) && (x.endDate === null || x.endDate.isAfter(self.from));
+            });
+
+            var countTo = Enumerable.From(employees).Count(function (x) {
+                return x.startDate !== null && (x.startDate.isBefore(self.to) || x.startDate.isSame(self.to, 'day')) && (x.endDate === null || x.endDate.isAfter(self.to));
+            });
+
+            var countVoluntary = Enumerable.From(employees).Count(function (x) {
+                return x.endVoluntary && x.endDate != null && (x.endDate.isAfter(self.from) || x.endDate.isSame(self.from)) && (x.endDate.isBefore(self.to) || x.endDate.isSame(self.to));
+            });
+
+            var turnover = countFrom + countTo > 0 ? Math.round(200 * countVoluntary / (countFrom + countTo)) : "?";
+            self.value(turnover);
+        };
+
+        self.updateCustom = function(from, to) {
+            self.from = from;
+            self.to = to;
+            self.name("" + from.format("DD/MM/YY") + " - " + to.format("DD/MM/YY"));
+            self.update();
+        };
+    }
+    
+    function Turnovers() {
+        var self = this;
+
+        var now = moment();
+        var ytdStart = moment({ y: now.year(), M: fiscalYearStartMonth - 1, d: 1 });
+        if (ytdStart.isAfter(now))
+            ytdStart = ytdStart.subtract(1, 'years');
+        
+        // current fiscal year
+        self.YTD = new Turnover("YTD", ytdStart, now.clone());
+        
+        // custom dates - init to last month
+        self.custom = new Turnover("", null, null);
+        self.custom.updateCustom(now.clone().subtract(1, "months"), now.clone());
+        
+        // quarters
+        var currentQuarter = now.clone().subtract(fiscalYearStartMonth - 1, "months").quarter();
+        self.quarters = ko.observable(Enumerable.Range(0, 4).Select(function (x) {
+            var quarterStart = moment([now.year(), (currentQuarter - 1) * 3, 1]).subtract((13 - fiscalYearStartMonth) % 12, "months").subtract(x * 3, "months");
+            var quarterEnd = quarterStart.clone().add(2, "months").endOf("month");
+            var quarterFiscalYear = moment([now.year(), (currentQuarter - 1) * 3, 1]).subtract(x * 3, "months").format("YY");
+            var quarterNo = quarterStart.clone().subtract(fiscalYearStartMonth - 1, "months").quarter()
+
+            if (quarterEnd.isAfter(now))
+                quarterEnd = now.clone();
+
+            return new Turnover("FY" + quarterFiscalYear + " Q" + quarterNo, quarterStart, quarterEnd);
+        }).ToArray());
+        
+        self.allTurnovers = [self.YTD, self.custom].concat(self.quarters());
+        
+
+        // logic for custom dates
+        self.customFrom = ko.observable(self.custom.from.format("DD/MM/YY"));
+        self.customTo = ko.observable(self.custom.to.format("DD/MM/YY"));
+
+        self.customUpdate = function () {
+            var from = moment(self.customFrom(), "DD/MM/YY");
+            var to = moment(self.customTo(), "DD/MM/YY");
+
+            if (from.isValid() && to.isValid() && (from.isBefore(to) || from.isSame(to))) {
+                self.custom.updateCustom(from, to);
+            }
+        };
+
+        // update turnovers
+        self.updateAll = function(employees) {
+            $.each(self.allTurnovers, function (i, t) {
+                t.update(employees);
+            });
+        };
+    }
+    
+    function FollowUp(name, url, isRed, isOrange, isTask) {
+        var self = this;
+        self.name = ko.observable(name);
+        self.url = ko.observable(url);
+        self.isRed = ko.observable(isRed);
+        self.isOrange = ko.observable(isOrange);
+        self.isTask = ko.observable(isTask);
     }
 
-
+    // update functions
     function UpdatePulseChart() {
-        var currEmployees = self.filteredEmployees();
+        var currEmployees = self.filteredActiveEmployees();
         var all = currEmployees.length;
-        var pulseData = Enumerable.From(currEmployees)
+        var pulseData = all > 0 ? Enumerable.From(currEmployees)
             .GroupBy("$.pulseId")
             .Select(function (g) {
                 var pulseOption = self.pulseOptionsEnumerable.Single(function (x) { return g.Key() === x.value; });
                 return { collectionAlias: pulseOption.name, y: parseFloat((g.source.length * 100.0 / all).toFixed(1)), pointName: "" + g.source.length, color: pulseOption.color };
             })
-            .ToArray();
+            .ToArray() : [];
 
         $("#pulse").shieldChart({
             exportOptions: {
@@ -393,7 +624,7 @@
     }
 
     function UpdateBenefitsChart() {
-        var currEmployees = self.filteredEmployees();
+        var currEmployees = self.filteredActiveEmployees();
         var all = currEmployees.length;
         
         self.benefitOptionsEnumerable.ForEach(function (b) {
@@ -401,9 +632,9 @@
                 return $.inArray(b.benefitName, e.benefits) !== -1;
             });
             
-            var chartData = [
+            var chartData = all > 0 ? [
                 { collectionAlias: "Not assigned", y: parseFloat(((all - count) * 100.0 / all).toFixed(1)), pointName: "" + (all - count), color: "#e3e3e3" },
-                { collectionAlias: b.benefitName, y: parseFloat((count * 100.0 / all).toFixed(1)), pointName: "" + count, color: b.color }];
+                { collectionAlias: b.benefitName, y: parseFloat((count * 100.0 / all).toFixed(1)), pointName: "" + count, color: b.color }] : [];
             
             $("#" + b.divId).shieldChart({
                 exportOptions: {
@@ -432,6 +663,64 @@
                 }]
             });
         });
+    }
+    
+    function UpdateEventsChart(chartDiv, chartName, whereQuery) {
+        var currEmployees = self.filteredActiveEmployees();
+
+        var events = Enumerable.From(currEmployees).SelectMany("$.events").Distinct("$.id").Where(whereQuery).ToArray();
+
+        var types = Enumerable.From(events).Select("$.typeId").Distinct().Select(function (t) {
+            return self.eventTypesEnumerable.First("$.value == " + t);
+        }).ToArray();
+
+        var eventsEnumerable = Enumerable.From(events);
+        var monthsEnumerable = Enumerable.From(self.eventMonths);
+        var dataSeries = Enumerable.From(types).Select(function (t) {
+            var data = monthsEnumerable.Select(function (m) {
+                var mEnd = m.clone().endOf("month").endOf("day");
+                return eventsEnumerable.Where("$.typeId == " + t.value).Count(function (e) {
+                    return (e.date.isSame(m) || e.date.isAfter(m)) && (e.date.isSame(mEnd) || e.date.isBefore(mEnd))
+                });
+            }).ToArray();
+
+            return { seriesType: "bar", collectionAlias: t.name, data: data };
+        }).ToArray();
+
+        $("#" + chartDiv).shieldChart({
+            exportOptions: {
+                image: false,
+                print: false
+            },
+            seriesSettings: {
+                bar: {
+                    stackMode: "normal"
+                }
+            },
+            axisX: {
+                drawColor: "transparent",
+                ticksColor: "transparent",
+                categoricalValues: monthsEnumerable.Select(function (m) { return m.format("MMMYY"); }).ToArray()
+            },
+            primaryHeader: {
+                text: chartName
+            },
+            chartLegend: {
+                enabled: false
+            },
+            seriesPalette: Enumerable.From(types).Select("$.color").ToArray(),
+            dataSeries: dataSeries
+        });
+    }
+    
+    function UpateFollowUps() {
+        var currEmployeesEnumerable = Enumerable.From(self.filteredActiveEmployees());
+        var reds = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Red'").value + "'").Select(function (e) { return new FollowUp(e.name, "#", true, false, false); });
+        var oranges = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Orange'").value + "'").Select(function (e) { return new FollowUp(e.name, "#", false, true, false); });
+
+        var followUps = reds.Concat(oranges).ToArray();
+
+        self.followUps(followUps);
     }
     
 }).call(HrDashboard);
