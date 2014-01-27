@@ -457,7 +457,7 @@ textarea {
             .name {
                 display: inline-block;
                 padding: 11px 9px;
-                width: 102px;
+                width: 122px;
                 height: 10px;
                 font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
                 font-size: 14px;
@@ -633,7 +633,8 @@ textarea {
     }
 
     svg g g:nth-child(2) {
-        .transform( translate(66px, 55px) );
+        .transform( translateX(66px) translateY(55px) ) !important;
+        .opacity( 0 );
     }
 
     svg g g:nth-child(2) text tspan {

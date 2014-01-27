@@ -130,6 +130,7 @@
 .transform( @arguments ) {
     -webkit-transform: @arguments;
     -moz-transform: @arguments;
+    -ms-transform: @arguments;
     -o-transform: @arguments;
     transform: @arguments;
 }
@@ -137,13 +138,15 @@
 .rotate( @angle ) {
 	-webkit-transform: rotate( @angle );
 	-moz-transform: rotate( @angle );
-	-o-transform: rotate( @angle );
+    -ms-transform: rotate( @angle );
+    -o-transform: rotate( @angle );
 	transform: rotate( @angle );
 }
 
 .scale( @value ) {
     -webkit-transform: scale( @value );
     -moz-transform: scale( @value );
+    -ms-transform: scale( @value );
     -o-transform: scale( @value );
     transform: scale( @value );
 }
@@ -151,6 +154,7 @@
 .scale-center( @value ) {
     -webkit-transform: scale( @value );
     -moz-transform: scale( @value );
+    -ms-transform: scale( @value );
     -o-transform: scale( @value );
     transform: scale( @value );
     -webkit-transform-origin: center center;
@@ -160,6 +164,7 @@
 .scaleX( @value ) {
     -webkit-transform: scaleX( @value );
     -moz-transform: scaleX( @value );
+    -ms-transform: scaleX( @value );
     -o-transform: scaleX( @value );
     transform: scaleX( @value );
 }
@@ -167,6 +172,7 @@
 .scaleY( @value ) {
     -webkit-transform: scaleY( @value );
     -moz-transform: scaleY( @value );
+    -ms-transform: scaleY( @value );
     -o-transform: scaleY( @value );
     transform: scaleY( @value );
 }

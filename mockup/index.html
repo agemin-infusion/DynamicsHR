@@ -272,6 +272,10 @@
         <script src="js/slimscroll.js"></script>
         <script type="text/javascript">
             $(function(){
+                setTimeout(function(){
+                    $('.benefits svg g g:nth-child(2)').attr('transform', 'translate(66, 55)');
+                    $('.benefits svg g g:nth-child(2)').animate({opacity: 1}, 300);
+                }, 0);
                 $('#ytd').click(function(){
                     $('#qtd').removeClass('active');
                     $('#ctd').removeClass('active');
