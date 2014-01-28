@@ -63,14 +63,15 @@
     <Content Include="css\styles.min.css">
       <DependentUpon>styles.less</DependentUpon>
     </Content>
-    <Content Include="index2.html" />
+    <Content Include="ihr_HrDashboard.min.js" />
+    <Content Include="ihr_styles.min.css" />
+    <Content Include="ihr_vendor.min.js" />
     <Content Include="js\async.min.js" />
     <Content Include="js\HrDashboard.js" />
     <Content Include="index.html" />
     <Content Include="js\HrDashboard.min.js">
       <DependentUpon>HrDashboard.js</DependentUpon>
     </Content>
-    <Content Include="js\jquery-1.10.2.min.js" />
     <Content Include="css\jquery-ui.less" />
     <Content Include="css\main.less" />
     <Content Include="css\normalize.less" />
@@ -81,9 +82,12 @@
       <DependentUpon>HrDashboard.js</DependentUpon>
     </Content>
     <Content Include="js\jquery-ui.min.js" />
+    <Content Include="js\jquery.min.js" />
+    <Content Include="js\jquery.spin.min.js" />
     <Content Include="js\knockout-3.0.0.min.js" />
     <Content Include="js\linq.min.js" />
     <Content Include="js\modernizr.min.js" />
+    <Content Include="js\moment.min.js" />
     <Content Include="js\SDK.JQuery.js" />
     <Content Include="js\SDK.JQuery.min.js">
       <DependentUpon>SDK.JQuery.js</DependentUpon>
@@ -94,7 +98,7 @@
     </Content>
     <Content Include="js\shield-ui.min.js" />
     <Content Include="js\slimscroll.min.js" />
-    <Content Include="test.html" />
+    <Content Include="js\spin.min.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -107,6 +111,7 @@
     <Content Include="js\SDK.MetaData.min.js.map">
       <DependentUpon>SDK.MetaData.js</DependentUpon>
     </Content>
+    <Content Include="!bundle.bat" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -26,11 +26,17 @@
     self.taskMetadata = null;
     self.allTasksEnumerable = null;
     self.allTasks = [];
+
+    self.clientUrl = ko.observable("");
+    self.employeeObjectTypeCode = ko.observable("");
+    self.eventObjectTypeCode = ko.observable("");
+    self.taskObjectTypeCode = ko.observable("");
     
     self.isLoading = ko.observable(false);
 
     // async methods
     self.refresh = function (loadData) {
+        self.clientUrl(SDK.JQuery._getClientUrl());
         self.isLoading(true);
         async.auto({
                 employees: function (callback) { getEmployeeData(callback, loadData); },
@@ -225,6 +231,8 @@
             return;
         }
 
+        self.taskObjectTypeCode(taskMetadata.ObjectTypeCode);
+
         var openTaskOption = Enumerable.From(Enumerable.From(taskMetadata.Attributes).Where('$.SchemaName === "StateCode"').Single().OptionSet.Options).Single('$.Label.UserLocalizedLabel.Label == "Open"').Value;
         
         var taskData = new Array();
@@ -338,6 +346,8 @@
     }
     
     function initializeEventOptions(eventMetadata) {
+        self.eventObjectTypeCode(eventMetadata.ObjectTypeCode);
+        
         var attType = Enumerable
          .From(eventMetadata.Attributes)
          .Where(function (x) { return x.SchemaName == "ihr_Type"; })
@@ -363,6 +373,8 @@
     }
     
     function initializeEmployees(employees, employeeMetadata, employeeTrailMetadata, events) {
+        self.employeeObjectTypeCode(employeeMetadata.ObjectTypeCode);
+        
         var activeOption = Enumerable.From(Enumerable.From(employeeMetadata.Attributes).Where('$.SchemaName === "statecode"').Single().OptionSet.Options).Single('$.Label.UserLocalizedLabel.Label == "Active"').Value;
         var trailActiveOption = Enumerable.From(Enumerable.From(employeeTrailMetadata.Attributes).Where('$.SchemaName === "statecode"').Single().OptionSet.Options).Single('$.Label.UserLocalizedLabel.Label == "Active"').Value;
         
@@ -463,15 +475,16 @@
     // knockout models
     function Filter(name, propertySelector) {
         var self = this;
+        var NotAvailable = "__NA__";
         self.filterName = name;
         self.name = ko.observable(name);
         self.options = ko.observableArray([]);
-        self.selectedId = ko.observable("NA");
+        self.selectedId = ko.observable(NotAvailable);
         self.selectedIdStr = ko.observable();
         self.filterFunction = function(employee) {
-            return self.selectedId() === "NA" || self.selectedId() === propertySelector(employee);
+            return self.selectedId() === NotAvailable || self.selectedId() === propertySelector(employee);
         };
-        
+
         self.setOption = function(name) {
             var option = $.grep(self.options(), function (value, index) { return value.name() === name; })[0];
             if (option) {
@@ -484,9 +497,13 @@
             }
         };
         
+        self.canReset = ko.computed(function () {
+            return self.selectedId() !== NotAvailable;
+        });
+        
         self.reset = function () {
             self.name(self.filterName);
-            self.selectedId("NA");
+            self.selectedId(NotAvailable);
             self.selectedIdStr("");
             $.each(self.options(), function (i, e) {
                 e.isActive(false);
@@ -628,10 +645,11 @@
         };
     }
     
-    function FollowUp(name, url, title, isRed, isOrange, isTask) {
+    function FollowUp(id, entityObjectTypeCode, name, title, isRed, isOrange, isTask) {
         var self = this;
+        self.id = id;
         self.name = name;
-        self.url = url;
+        self.entityObjectTypeCode = entityObjectTypeCode;
         self.title = title;
         self.isRed = isRed;
         self.isOrange = isOrange;
@@ -715,6 +733,11 @@
                 }]
             });
         });
+        
+        setTimeout(function () {
+            $('.benefits svg g g:nth-child(2)').attr('transform', 'translate(66, 55)');
+            $('.benefits svg g g:nth-child(2)').animate({ opacity: 1 }, 300);
+        }, 50);
     }
     
     function UpdateEventsChart(chartDiv, chartName, whereQuery) {
@@ -768,12 +791,12 @@
     function UpateFollowUps() {
         var currEmployeesEnumerable = Enumerable.From(self.filteredActiveEmployees());
         
-        var reds = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Red'").value + "'").Select(function (e) { return new FollowUp(e.name, e.id, "Red Pulse", true, false, false); });
-        var oranges = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Orange'").value + "'").Select(function (e) { return new FollowUp(e.name, e.id, "Orange Pulse", false, true, false); });
+        var reds = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Red'").value + "'").Select(function (e) { return new FollowUp(e.id, self.employeeObjectTypeCode(), e.name, "Red Pulse", true, false, false); });
+        var oranges = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Orange'").value + "'").Select(function (e) { return new FollowUp(e.id, self.employeeObjectTypeCode(), e.name, "Orange Pulse", false, true, false); });
         
         var tasksEnumerable = Enumerable.From(self.allTasks);
         var tasks = tasksEnumerable.Join(currEmployeesEnumerable, "$.employeeId", "$.id", function (t, e) {
-            return new FollowUp(e.name, t.id, t.subject, false, false, true);
+            return new FollowUp(t.id, self.taskObjectTypeCode(), e.name, t.subject, false, false, true);
         });
 
         var followUps = reds.Concat(oranges).Concat(tasks).ToArray();
