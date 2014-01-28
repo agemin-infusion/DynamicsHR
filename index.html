@@ -99,7 +99,7 @@
                     <div class="list-wrapper">
                         <ul id="followups_list" class="list" data-bind="foreach: followUps">
                             <li class="list-element">
-                                <a href="#" target="_self" data-bind="text: name, attr: { href: $root.clientUrl() + '/main.aspx?etc=' + entityObjectTypeCode + '&amp;id=' + id + '&amp;pagetype=entityrecord', title: title }, css: { red: isRed, orange: isOrange, task: isTask }"></a>
+                                <a href="#" target="_blank" data-bind="text: name, attr: { href: $root.clientUrl() + '/main.aspx?etc=' + entityObjectTypeCode + '&amp;id=' + id + '&amp;pagetype=entityrecord', title: title }, css: { red: isRed, orange: isOrange, task: isTask }"></a>
                             </li>
                         </ul>
                     </div>
