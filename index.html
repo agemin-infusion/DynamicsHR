@@ -19,6 +19,51 @@
         <![endif]-->
         <div class="main-container">
             <div id="loader" class="loader" data-bind="visible: isLoading, css: {loading: isLoading}"></div>
+              <div class="filters-wrapper">
+                <button id="btn_clear" class="filter-button" data-bind="click: clearFilters">Clear All</button>
+                
+                <div class="filter-select" data-bind="with: managerFilter">
+                    <i class="icon"></i>
+                    <span class="select name" data-bind="text: name, attr: { title: name }"></span>
+                    <ul class="list" data-bind="foreach: options">
+                        <li class="list-element">
+                            <a href="#manager" data-bind="click: $root.filterByManager, clickBubble: false">
+                                <span class="option name" data-bind="text: name, css: { active: isActive }, attr: { title: name }"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <button class="filter-button" data-bind="click: managerFilter().reset, visible: managerFilter().canReset">X</button>
+
+                <div class="filter-select" data-bind="with: groupFilter">
+                    <i class="icon"></i>
+                    <span class="select name" data-bind="text: name, attr: { title: name }"></span>
+                    <ul class="list" data-bind="foreach: options">
+                        <li class="list-element">
+                            <a href="#group" data-bind="click: $root.filterByGroup, clickBubble: false">
+                                <span class="option name" data-bind="text: name, css: { active: isActive }, attr: { title: name }"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <button class="filter-button" data-bind="click: groupFilter().reset, visible: groupFilter().canReset">X</button>
+
+                <div class="filter-select" data-bind="with: officeFilter">
+                    <i class="icon"></i>
+                    <span class="select name" data-bind="text: name, attr: { title: name }"></span>
+                    <ul class="list" data-bind="foreach: options">
+                        <li class="list-element">
+                            <a href="#office" data-bind="click: $root.filterByOffice, clickBubble: false">
+                                <span class="option name" data-bind="text: name, css: { active: isActive }, attr: { title: name }"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <button class="filter-button" data-bind="click: officeFilter().reset, visible: officeFilter().canReset">X</button>
+
+            </div>
+        </div>
+        <div class="clearfix" ></div>
             <div class="tiles-wrapper">
                 <div class="tile pulse">
                     <h2 class="header">
@@ -105,50 +150,7 @@
                     </div>
                 </div>
             </div>
-            <div class="filters-wrapper">
-                <button id="btn_clear" class="filter-button" data-bind="click: clearFilters">Clear All</button>
-                
-                <div class="filter-select" data-bind="with: managerFilter">
-                    <i class="icon"></i>
-                    <span class="select name" data-bind="text: name, attr: { title: name }"></span>
-                    <ul class="list" data-bind="foreach: options">
-                        <li class="list-element">
-                            <a href="#manager" data-bind="click: $root.filterByManager, clickBubble: false">
-                                <span class="option name" data-bind="text: name, css: { active: isActive }, attr: { title: name }"></span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <button class="filter-button" data-bind="click: managerFilter().reset, visible: managerFilter().canReset">X</button>
-
-                <div class="filter-select" data-bind="with: groupFilter">
-                    <i class="icon"></i>
-                    <span class="select name" data-bind="text: name, attr: { title: name }"></span>
-                    <ul class="list" data-bind="foreach: options">
-                        <li class="list-element">
-                            <a href="#group" data-bind="click: $root.filterByGroup, clickBubble: false">
-                                <span class="option name" data-bind="text: name, css: { active: isActive }, attr: { title: name }"></span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <button class="filter-button" data-bind="click: groupFilter().reset, visible: groupFilter().canReset">X</button>
-
-                <div class="filter-select" data-bind="with: officeFilter">
-                    <i class="icon"></i>
-                    <span class="select name" data-bind="text: name, attr: {title: name}"></span>
-                    <ul class="list" data-bind="foreach: options">
-                        <li class="list-element">
-                            <a href="#office" data-bind="click: $root.filterByOffice, clickBubble: false">
-                                <span class="option name" data-bind="text: name, css: { active: isActive }, attr: { title: name }"></span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <button class="filter-button" data-bind="click: officeFilter().reset, visible: officeFilter().canReset">X</button>
-
-            </div>
-        </div>
+          
         <script src="ihr_HrDashboard.min.js" type="text/javascript"></script>
 <!--        <script src="js/HrDashboard.js" type="text/javascript"></script>-->
         <script type="text/javascript">
