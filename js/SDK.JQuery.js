@@ -64,7 +64,7 @@ SDK.JQuery = {
   	return context.getClientUrl();
   }
   else{
-	return "https://infn365.crm4.dynamics.com";
+      return "https://infusion.crm4.dynamics.com";
   }
  },
  _ODataPath: function () {

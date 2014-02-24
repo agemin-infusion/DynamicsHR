@@ -464,7 +464,7 @@ SDK.Metadata = SDK.Metadata || { __namespace: true };
          return context.getClientUrl();
      }
      else {
-         return "https://infn365.crm4.dynamics.com";
+         return "https://infusion.crm4.dynamics.com";
      }
  };
 

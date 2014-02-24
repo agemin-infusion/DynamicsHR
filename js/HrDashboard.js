@@ -376,6 +376,8 @@
         self.employeeObjectTypeCode(employeeMetadata.ObjectTypeCode);
         
         var activeOption = Enumerable.From(Enumerable.From(employeeMetadata.Attributes).Where('$.SchemaName === "statecode"').Single().OptionSet.Options).Single('$.Label.UserLocalizedLabel.Label == "Active"').Value;
+        
+        var idcOption = Enumerable.From(Enumerable.From(employeeMetadata.Attributes).Where('$.SchemaName === "ihr_EmployeeStatus"').Single().OptionSet.Options).Single('$.Label.UserLocalizedLabel.Label == "IDC"').Value;
         var trailActiveOption = Enumerable.From(Enumerable.From(employeeTrailMetadata.Attributes).Where('$.SchemaName === "statecode"').Single().OptionSet.Options).Single('$.Label.UserLocalizedLabel.Label == "Active"').Value;
         
         self.allEmployees = employees.Select(function (x) {
@@ -393,7 +395,7 @@
                 return new Event(e.ihr_eventId, moment({ y: e.ihr_Date.getFullYear(), M: e.ihr_Date.getMonth(), d: e.ihr_Date.getDate() }), e.ihr_Type.Value, e.ihr_IsSocialEvent, e.ihr_IsTouchpoint);
             }).ToArray();
 
-            return new Employee(x.ihr_employeeId, x.ihr_fullname, x.ihr_ManagerId.Id, x.ihr_Group.Value, x.ihr_Office.Value, x.ihr_Pulse.Value, x.statecode.Value === activeOption, benefits, startDate, endDate, endTrail != null ? (endTrail.ihr_Reason === "Voluntary") : false, employeeEvents);
+            return new Employee(x.ihr_employeeId, x.ihr_fullname, x.ihr_ManagerId.Id, x.ihr_Group.Value, x.ihr_Office.Value, x.ihr_Pulse.Value, x.statecode.Value === activeOption, x.ihr_EmployeeStatus.Value == idcOption, benefits, startDate, endDate, endTrail != null ? (endTrail.ihr_Reason === "Voluntary") : false, employeeEvents);
         }).ToArray();
         
         self.allActiveEmployees = Enumerable.From(self.allEmployees).Where("$.isActive").ToArray();
@@ -466,7 +468,7 @@
 
     self.filteredAllEmployeesThrottled = ko.computed(self.filteredAllEmployees).extend({ throttle: 100 });
     self.filteredAllEmployeesThrottled.subscribe(function() {
-        self.turnovers().updateAll(self.filteredAllEmployees());
+        self.turnovers().updateAll(Enumerable.From(self.filteredAllEmployees()).Where("$.isIdc").ToArray());
     });
 
     self.turnovers = ko.observable(new Turnovers());
@@ -518,7 +520,7 @@
         self.isActive = ko.observable(false);
     }
     
-    function Employee(id, name, managerId, groupId, officeId, pulseId, isActive, benefits, startDate, endDate, endVoluntary, events) {
+    function Employee(id, name, managerId, groupId, officeId, pulseId, isActive, isIdc, benefits, startDate, endDate, endVoluntary, events) {
         var self = this;
         self.id = id;
         self.name = name;
@@ -527,6 +529,7 @@
         self.pulseId = pulseId;
         self.officeId = officeId;
         self.isActive = isActive;
+        self.isIdc = isIdc;
         self.benefits = benefits;
         self.startDate = startDate;
         self.endDate = endDate;
@@ -658,7 +661,7 @@
 
     // update functions
     function UpdatePulseChart() {
-        var currEmployees = self.filteredActiveEmployees();
+        var currEmployees = Enumerable.From(self.filteredActiveEmployees()).Where("$.isIdc").ToArray();
         var all = currEmployees.length;
         var pulseData = all > 0 ? Enumerable.From(currEmployees)
             .GroupBy("$.pulseId")
@@ -694,7 +697,7 @@
     }
 
     function UpdateBenefitsChart() {
-        var currEmployees = self.filteredActiveEmployees();
+        var currEmployees = Enumerable.From(self.filteredActiveEmployees()).Where("$.isIdc").ToArray();
         var all = currEmployees.length;
         
         self.benefitOptionsEnumerable.ForEach(function (b) {
@@ -791,8 +794,8 @@
     function UpateFollowUps() {
         var currEmployeesEnumerable = Enumerable.From(self.filteredActiveEmployees());
         
-        var reds = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Red'").value + "'").Select(function (e) { return new FollowUp(e.id, self.employeeObjectTypeCode(), e.name, "Red Pulse", true, false, false); });
-        var oranges = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Orange'").value + "'").Select(function (e) { return new FollowUp(e.id, self.employeeObjectTypeCode(), e.name, "Orange Pulse", false, true, false); });
+        var reds = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Red'").value + "'").Select(function (e) { return new FollowUp(e.id, self.employeeObjectTypeCode(), e.name, "Red Pulse", true, false, false); }).OrderBy("$.name");
+        var oranges = currEmployeesEnumerable.Where("$.pulseId == '" + self.pulseOptionsEnumerable.First("$.name == 'Orange'").value + "'").Select(function (e) { return new FollowUp(e.id, self.employeeObjectTypeCode(), e.name, "Orange Pulse", false, true, false); }).OrderBy("$.name");
         
         var tasksEnumerable = Enumerable.From(self.allTasks);
         var tasks = tasksEnumerable.Join(currEmployeesEnumerable, "$.employeeId", "$.id", function (t, e) {
